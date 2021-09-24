@@ -1,0 +1,27 @@
+### ЧАСТЬ 2
+
+import matplotlib.pyplot as plt
+
+for area in list(df2['area'].drop_duplicates()):
+    data = df2[df2['area'] == area]
+    fig, ax = plt.subplots(figsize = (15,10))
+    for i in list(range(data['cluster'].max()+1)):
+        data1 = df2[(df2['area'] == area) & (df2['cluster'] == i)]
+        ax.scatter(x = data1['x'], y = data1['y'], c = data1['color'], edgecolors = 'black', label = data1['cluster_name'][0])
+        ax.legend(loc = 'upper left')
+        
+    
+        for i, txt in enumerate(list(data1['keyword'])):
+            ax.annotate(txt, (data1['x'][i], data1['y'][i]))
+      
+    ax.set_title(area)
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    
+    
+    
+plt.show()
