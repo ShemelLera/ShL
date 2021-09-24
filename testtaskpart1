@@ -1,0 +1,37 @@
+import pandas as pd
+
+## ЧАСТЬ 1
+
+#чтение файла
+df = pd.read_excel('/home/lera/Загрузки/Тестовое задание.xlsx')
+
+#Подготовка данных. Удаляем слова, повторяющиеся в одной и той же области. Удаляем нулевые строки. 
+df.drop_duplicates(subset = ['area', 'keyword'], inplace = True)
+df.dropna()
+df.drop('good (1)', axis =1, inplace = True) #При чтении данных появилась колонка 'good (1)'. В выходных данных она нам не нужна, поэтому тоже удаляем.
+
+#Создаем отдельный датасет для сортировки данных согласно требованию
+df1 = df.sort_values(by = ['area','cluster','count'], ascending=False, ignore_index = True)
+df1.sort_values(by = ['area','cluster'], inplace = True, ignore_index = True)
+df1 = df1.dropna()
+#Для удобства меняем тип данных у колонки с номером кластера на целочисленный
+df1['cluster'] = df1['cluster'].astype(int)
+
+#Создаем конечный датасет, где меняем индексы на название области + номер кластера
+df2 = df1
+df2.index = df2['area'].astype(str) + df2['cluster'].astype(str)
+
+#Добавляем колонку цвета в датасет
+index_list = list(df2.index.drop_duplicates())
+colors = list(['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan'])
+for elem in index_list:
+    if index_list.index(elem)<10:
+        i = index_list.index(elem)%10
+    else:
+        i = index_list.index(elem)%(10*(index_list.index(elem)//10))
+    df2.loc[elem, 'color'] = colors[i]
+    
+
+#Скачиваем полученные данные
+df2.to_excel('Тестовое задание Часть 1.xlsx', index = False)
+
